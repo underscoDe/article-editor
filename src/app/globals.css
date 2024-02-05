@@ -34,3 +34,22 @@ body {
   }
 }
 
+.quill .ql-toolbar.ql-snow {
+  margin-bottom: 1rem;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-radius: 12px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.quill .ql-container.ql-snow {
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border: none;
+  min-height: 300px;
+  border-radius: 12px;
+  padding: .8rem;
+}
