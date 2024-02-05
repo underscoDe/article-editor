@@ -2,39 +2,71 @@ import dynamic from "next/dynamic";
 import { DeltaStatic, Sources } from "quill";
 import { useMemo, useState } from "react";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const modules = {
   toolbar: [
-    [{ font: [] }],
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ color: [] }, { background: [] }],
-    [{ script: "sub" }, { script: "super" }],
-    ["blockquote", "code-block"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ indent: "-1" }, { indent: "+1" }, { align: [] }],
-    ["link", "image"],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link", "image", "video"],
     ["clean"],
   ],
+  clipboard: {
+    matchVisual: false,
+  },
 };
 
-function ArticleEditor() {
-  const [editorContent, setEditorContent] = useState("");
-  const [textFromEditorContent, setTextFromEditorContent] = useState("");
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "link",
+  "image",
+  "video",
+];
 
+interface ArticleEditorProps {
+  value: string;
+  onChange: (value: string, delta: DeltaStatic, source: Sources) => void;
+  placeholder?: string;
+}
+
+const ArticleEditor: React.FC<ArticleEditorProps> = ({
+  value,
+  onChange,
+  placeholder = "Contenu de l'article...",
+}) => {
   const ReactQuill = useMemo(
-    () => dynamic(() => import("react-quill"), { ssr: false }),
+    () =>
+      dynamic(() => import("react-quill"), {
+        ssr: false,
+        loading: () => <p>Loading ...</p>,
+      }),
     []
   );
 
   const handleEditorChange = (
-    value: string,
+    editorValue: string,
     delta: DeltaStatic,
     source: Sources,
     editor: ReactQuill.UnprivilegedEditor
   ) => {
-    setEditorContent(value);
-    setTextFromEditorContent(editor.getHTML());
+    onChange(editorValue, delta, source);
   };
 
   return (
@@ -42,11 +74,12 @@ function ArticleEditor() {
       className="h-full w-full max-w-full"
       theme="snow"
       modules={modules}
-      value={editorContent}
+      formats={formats}
+      value={value}
       onChange={handleEditorChange}
-      placeholder="<p>Contenu de l'article...</p>"
+      placeholder={placeholder}
     />
   );
-}
+};
 
 export default ArticleEditor;
